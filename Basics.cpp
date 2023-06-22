@@ -92,6 +92,32 @@ void updateParticles(std::vector<Particle>& particles, float deltaTime) {
 
         particle.position = particle.position + particle.velocity * deltaTime;
     }
+
+    for(std::size_t i = 0; i < particles.size(); ++i) {
+        for(std::size_t j = i + 1; j < particles.size(); ++j) {
+            Particle& particleA = particles[i];
+            Particle& particleB = particles[j];
+            
+            Vector3 deltaPos = particleA.position - particleB.position;
+            float distancedSquared = deltaPos.dot(deltaPos);
+            float radiusSum = 0.5f * (particleA.mass + particleB.mass);
+
+            if(distancedSquared <= radiusSum * radiusSum) {
+                Vector3 normal = deltaPos.normalized();
+                Vector3 relativeVelocity = particleB.velocity - particleA.velocity;
+                float velocityAlongNormal = relativeVelocity.dot(normal);
+
+                if(velocityAlongNormal < 0.0f) {
+                    float impulseMagnitude = -(0.1f + 0.8f) * velocityAlongNormal / (particleA.mass + particleB.mass);
+
+                    Vector3 impulse = impulseMagnitude * normal;
+
+                    particleA.velocity = particleA.velocity - impulse/particleA.mass;
+                    particleB.velocity = particleB.velocity - impulse/particleB.mass;
+                }
+            }
+        }
+    }
 }
 
 int main() {
