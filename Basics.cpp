@@ -110,7 +110,7 @@ void updateParticles(std::vector<Particle>& particles, float deltaTime) {
                 if(velocityAlongNormal < 0.0f) {
                     float impulseMagnitude = -(0.1f + 0.8f) * velocityAlongNormal / (particleA.mass + particleB.mass);
 
-                    Vector3 impulse = impulseMagnitude * normal;
+                    Vector3 impulse = normal * impulseMagnitude;
 
                     particleA.velocity = particleA.velocity - impulse/particleA.mass;
                     particleB.velocity = particleB.velocity - impulse/particleB.mass;
